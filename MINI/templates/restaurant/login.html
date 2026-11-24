@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FoodWise | Restaurant Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #10b981;
+            --primary-dark: #065f46;
+            --slate-900: #0f172a;
+            --slate-600: #475569;
+            --slate-100: #f1f5f9;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            height: 100vh;
+            display: flex;
+            background-color: #fff;
+            overflow: hidden;
+        }
+
+        /* --- LEFT PANEL: FRESH FOOD VIBE --- */
+        .visual-panel {
+            flex: 1.3;
+            position: relative;
+            /* IMAGE: Bright, High-End Flat Lay of fresh ingredients/food */
+            background: url('https://images.unsplash.com/photo-1543353071-873f17a7a088?auto=format&fit=crop&q=80&w=2000');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 80px;
+        }
+
+        /* This gradient ensures the text is 100% visible by fading the image into white */
+        .visual-panel::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to right, rgba(255,255,255,0.9) 20%, rgba(255,255,255,0.2) 60%, transparent 100%);
+        }
+
+        .content-box {
+            position: relative;
+            z-index: 10;
+            max-width: 480px;
+        }
+
+        .tag {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 24px;
+        }
+
+        .content-box h1 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 60px;
+            color: var(--slate-900);
+            line-height: 1.05;
+            margin-bottom: 24px;
+        }
+
+        .content-box h1 span {
+            color: var(--primary);
+            display: block;
+        }
+
+        .content-box p {
+            font-size: 19px;
+            color: var(--slate-600);
+            line-height: 1.6;
+            font-weight: 400;
+        }
+
+        /* --- RIGHT PANEL: LOGIN FORM --- */
+        .form-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 60px;
+            background: white;
+            z-index: 20;
+            box-shadow: -20px 0 50px rgba(0,0,0,0.05);
+        }
+
+        .form-container {
+            width: 100%;
+            max-width: 360px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-family: 'DM Serif Display', serif;
+            font-size: 32px;
+            color: var(--slate-900);
+            margin-bottom: 50px;
+        }
+
+        .logo span { color: var(--primary); }
+
+        .form-header h2 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 32px;
+            color: var(--slate-900);
+            margin-bottom: 8px;
+        }
+
+        .form-header p {
+            color: var(--slate-600);
+            margin-bottom: 32px;
+            font-size: 15px;
+        }
+
+        /* PREMIUM INPUTS */
+        .input-group { margin-bottom: 24px; }
+
+        .input-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--slate-900);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .fw-input {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid var(--slate-100);
+            border-radius: 14px;
+            font-size: 16px;
+            background: var(--slate-100);
+            transition: 0.3s;
+            outline: none;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .fw-input:focus {
+            background: white;
+            border-color: var(--primary);
+            box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.1);
+        }
+
+        .btn-login {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            padding: 18px;
+            border: none;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+            box-shadow: 0 10px 20px -5px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-login:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .ngo-footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 14px;
+            color: var(--slate-600);
+        }
+
+        .ngo-footer a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        /* MOBILE FIX */
+        @media (max-width: 1024px) {
+            .visual-panel { display: none; }
+            .form-panel { flex: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Visual Side -->
+    <section class="visual-panel">
+        <div class="content-box">
+            <div class="tag">Restaurant Dashboard</div>
+            <h1>Less Waste. <span>More Impact.</span></h1>
+            <p>
+                The most efficient platform to manage surplus inventory. Join the elite network of restaurants feeding the community, not the landfill.
+            </p>
+        </div>
+    </section>
+
+    <!-- Login Side -->
+    <section class="form-panel">
+        <div class="form-container">
+            <div class="logo">Food<span>Wise</span></div>
+
+            <div class="form-header">
+                <h2>Welcome Back</h2>
+                <p>Please enter your restaurant credentials.</p>
+            </div>
+
+            <form method="POST">
+                {% csrf_token %}
+                
+                <div class="input-group">
+                    <label>Restaurant ID</label>
+                    <input 
+                        type="text" 
+                        name="restaurant_id" 
+                        class="fw-input" 
+                        placeholder="e.g. RES-4402" 
+                        required>
+                </div>
+
+                <button type="submit" class="btn-login">
+                    Sign In →
+                </button>
+
+                {% if error %}
+                <p style="color: #ef4444; font-size: 13px; margin-top: 15px; text-align: center; font-weight: 600;">
+                    ⚠ {{ error }}
+                </p>
+                {% endif %}
+            </form>
+
+            <div class="ngo-footer">
+                Representing an NGO? <a href="#">Access NGO Portal</a>
+            </div>
+        </div>
+    </section>
+
+</body>
+</html>

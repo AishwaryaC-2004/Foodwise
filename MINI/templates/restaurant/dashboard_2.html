@@ -1,0 +1,375 @@
+{% extends 'restaurant/base_restaurant.html' %}
+
+{% block content %}
+
+<!-- Header -->
+
+<div class="fw-card mb-4">
+
+<div class="d-flex justify-content-between align-items-center">
+
+<div>
+
+<h2 class="mb-1">
+🍽 {{ restaurant.restaurant_name }}
+</h2>
+
+<p class="text-muted mb-0">
+
+<i class="bi bi-geo-alt"></i>
+
+{{ restaurant.city }}
+
+<span class="badge-status badge-active ms-2">
+● Active
+</span>
+
+</p>
+
+</div>
+
+<div>
+
+<a href="{% url 'prediction' %}"
+class="btn-fw-primary">
+
+<i class="bi bi-graph-up-arrow"></i>
+
+Generate Forecast
+
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- FoodWise Pipeline -->
+
+<div class="pipeline-bar">
+
+<div class="pipeline-step">
+
+<div class="ps-icon">📈</div>
+
+<div class="ps-label">
+Forecasted
+</div>
+
+<div class="ps-value">
+{{ forecast_total }}
+</div>
+
+</div>
+
+<div class="pipeline-arrow">
+→
+</div>
+
+<div class="pipeline-step">
+
+<div class="ps-icon">🍳</div>
+
+<div class="ps-label">
+Produced
+</div>
+
+<div class="ps-value">
+{{ produced_total }}
+</div>
+
+</div>
+
+<div class="pipeline-arrow">
+→
+</div>
+
+<div class="pipeline-step">
+
+<div class="ps-icon">🛒</div>
+
+<div class="ps-label">
+Sold
+</div>
+
+<div class="ps-value">
+{{ sold_total }}
+</div>
+
+</div>
+
+<div class="pipeline-arrow">
+→
+</div>
+
+<div class="pipeline-step active">
+
+<div class="ps-icon">
+🎁
+</div>
+
+<div class="ps-label">
+Donated
+</div>
+
+<div class="ps-value">
+{{ donations|length }}
+</div>
+
+</div>
+
+</div>
+
+<!-- Statistics -->
+
+<div class="row g-3 mb-4">
+
+<div class="col-md-3">
+
+<div class="stat-card">
+
+<div class="stat-label">
+Menu Items
+</div>
+
+<div class="stat-value text-primary">
+{{ menu_items|length }}
+</div>
+
+<div class="stat-sub">
+Available Dishes
+</div>
+
+</div>
+
+</div>
+
+<div class="col-md-3">
+
+<div class="stat-card">
+
+<div class="stat-label">
+Forecast
+</div>
+
+<div class="stat-value text-success">
+{{ forecast_total }}
+</div>
+
+<div class="stat-sub">
+Tomorrow Demand
+</div>
+
+</div>
+
+</div>
+
+<div class="col-md-3">
+
+<div class="stat-card">
+
+<div class="stat-label">
+Donations
+</div>
+
+<div class="stat-value text-warning">
+{{ donations|length }}
+</div>
+
+<div class="stat-sub">
+NGO Transfers
+</div>
+
+</div>
+
+</div>
+
+<div class="col-md-3">
+
+<div class="stat-card">
+
+<div class="stat-label">
+Status
+</div>
+
+<div class="stat-value text-success">
+✓
+</div>
+
+<div class="stat-sub">
+System Healthy
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- Quick Actions -->
+
+<div class="fw-card mb-4">
+
+<div class="section-title">
+Quick Actions
+</div>
+
+<div style="display:flex; flex-wrap:wrap; gap:10px;">
+
+<a href="{% url 'prediction' %}"
+class="btn-fw-primary">
+
+<i class="bi bi-graph-up-arrow"></i>
+
+Run Forecast
+
+</a>
+
+<a href="{% url 'simulator' %}"
+class="btn-fw-secondary"
+style="border-color:#6366f1;color:#6366f1;">
+
+<i class="bi bi-cpu"></i>
+
+AI Simulator
+
+</a>
+
+<a href="{% url 'production' %}"
+class="btn-fw-secondary">
+
+<i class="bi bi-fire"></i>
+
+Log Production
+
+</a>
+
+<a href="{% url 'donations' %}"
+class="btn-fw-secondary">
+
+<i class="bi bi-gift"></i>
+
+View Donations
+
+</a>
+
+<a href="{% url 'map' %}"
+class="btn-fw-secondary">
+
+<i class="bi bi-map"></i>
+
+Map View
+
+</a>
+
+<a href="{% url 'analytics' %}"
+class="btn-fw-secondary">
+
+<i class="bi bi-bar-chart-line"></i>
+
+Analytics
+
+</a>
+
+</div>
+
+</div>
+
+<!-- Recent Activity -->
+
+<div class="fw-card mb-4">
+
+<div class="section-title">
+Recent Activity
+</div>
+
+<ul class="list-group list-group-flush">
+
+<li class="list-group-item">
+📈 Forecast generated successfully
+</li>
+
+<li class="list-group-item">
+🍳 Production records updated
+</li>
+
+<li class="list-group-item">
+🤝 Donation matching active
+</li>
+
+</ul>
+
+</div>
+
+<!-- Menu -->
+
+<div class="fw-card">
+
+<div class="section-title">
+Restaurant Menu
+</div>
+
+<div class="mb-3">
+
+<input
+type="text"
+class="form-control"
+placeholder="🔍 Search menu item...">
+
+</div>
+
+<table class="fw-table">
+
+<thead>
+
+<tr>
+
+<th>#</th>
+
+<th>Item Name</th>
+
+<th style="text-align:right;">
+Base Price
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+{% for item in menu_items|slice:":30" %}
+
+<tr>
+
+<td style="color:var(--text-muted);">
+{{ forloop.counter }}
+</td>
+
+<td style="font-weight:500;">
+{{ item.item_name }}
+</td>
+
+<td
+style="
+text-align:right;
+font-weight:600;
+color:var(--brand-green);
+">
+
+₹{{ item.base_price }}
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+</div>
+
+{% endblock %}

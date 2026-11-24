@@ -1,0 +1,304 @@
+{% extends 'restaurant/base_restaurant.html' %}
+
+{% block content %}
+<style>
+  :root {
+    --brand-primary: #10b981; 
+    --brand-dark: #064e3b;    
+    --brand-light: #ecfdf5;   
+    --text-main: #1f2937;
+    --text-muted: #6b7280;
+    --card-bg: #ffffff;
+  }
+
+  .page-header h1 {
+    font-weight: 800;
+    color: var(--brand-dark);
+    margin-bottom: 4px;
+    letter-spacing: -0.02em;
+  }
+
+  .page-header p {
+    color: var(--text-muted);
+    font-size: 1rem;
+    margin-bottom: 32px;
+  }
+
+  /* Enhanced Card System */
+  .card-simulator {
+    background: var(--card-bg);
+    border-radius: 20px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+  }
+
+  .card-header-gradient {
+    background: var(--brand-light);
+    padding: 20px 24px;
+    border-bottom: 1px solid #d1fae5;
+  }
+
+  .section-title-alt {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--brand-dark);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+  }
+
+  /* Form Elements */
+  .simulator-form-group {
+    margin-bottom: 20px;
+  }
+
+  .fw-label-alt {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--brand-dark);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+  }
+
+  .input-with-icon {
+    position: relative;
+  }
+
+  .input-icon-tag {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--brand-primary);
+    font-size: 1.1rem;
+  }
+
+  .fw-input-green {
+    width: 100%;
+    padding: 12px 12px 12px 40px;
+    border: 1px solid #d1d5db;
+    border-radius: 12px;
+    background: #f9fafb;
+    transition: all 0.2s;
+    font-weight: 500;
+  }
+
+  .fw-input-green:focus {
+    outline: none;
+    border-color: var(--brand-primary);
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+  }
+
+  /* Results Table */
+  .table-forecast {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .table-forecast th {
+    text-align: left;
+    padding: 16px 24px;
+    background: #f8fafc;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+  }
+
+  .table-forecast td {
+    padding: 18px 24px;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: middle;
+  }
+
+  .value-display {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    color: var(--text-main);
+  }
+
+  .recommended-badge {
+    background: var(--brand-light);
+    color: var(--brand-dark);
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-weight: 800;
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    border: 1px solid #d1fae5;
+  }
+
+  /* Buttons */
+  .btn-generate {
+    background: var(--brand-primary);
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 12px;
+    font-weight: 700;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s;
+    cursor: pointer;
+  }
+
+  .btn-generate:hover {
+    background: var(--brand-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px rgba(16, 185, 129, 0.2);
+  }
+
+  /* Empty State */
+  .ai-empty-state {
+    text-align: center;
+    padding: 80px 40px;
+    background: #ffffff;
+    border: 2px dashed #d1d5db;
+    border-radius: 20px;
+  }
+
+  .pulse-icon {
+    font-size: 50px;
+    margin-bottom: 20px;
+    animation: pulse-green 2s infinite;
+  }
+
+  @keyframes pulse-green {
+    0% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.1); opacity: 1; }
+    100% { transform: scale(1); opacity: 0.5; }
+  }
+</style>
+
+<div class="page-header">
+  <h1>AI Demand Scenario Simulator</h1>
+  <p>Leverage predictive intelligence to optimize your kitchen production</p>
+</div>
+
+<div class="row g-4">
+
+  <!-- Form panel -->
+  <div class="col-md-4">
+    <div class="card-simulator" style="position:sticky; top:24px;">
+      <div class="card-header-gradient">
+        <h2 class="section-title-alt"><i class="bi bi-sliders"></i> Parameters</h2>
+      </div>
+
+      <div class="p-4">
+        <form method="POST" style="display:flex; flex-direction:column; gap:12px;">
+          {% csrf_token %}
+
+          <div class="simulator-form-group">
+            <label class="fw-label-alt">🌡 Temperature (°C)</label>
+            <div class="input-with-icon">
+              <i class="bi bi-thermometer-half input-icon-tag"></i>
+              <input type="number" name="temperature" class="fw-input-green" value="30" min="-10" max="50">
+            </div>
+          </div>
+
+          <div class="simulator-form-group">
+            <label class="fw-label-alt">🌧 Rainfall (mm)</label>
+            <div class="input-with-icon">
+              <i class="bi bi-cloud-rain input-icon-tag"></i>
+              <input type="number" name="rainfall" class="fw-input-green" value="20" min="0" max="300">
+            </div>
+          </div>
+
+          <div class="simulator-form-group">
+            <label class="fw-label-alt">🗓 Day Type</label>
+            <div class="input-with-icon">
+              <i class="bi bi-calendar-event input-icon-tag"></i>
+              <select name="holiday" class="fw-input-green">
+                <option value="0">Regular Working Day</option>
+                <option value="1">Public Holiday</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="simulator-form-group">
+            <label class="fw-label-alt">📣 Marketing</label>
+            <div class="input-with-icon">
+              <i class="bi bi-megaphone input-icon-tag"></i>
+              <select name="promotion" class="fw-input-green">
+                <option value="0">No active promotions</option>
+                <option value="1">Active promotion running</option>
+              </select>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-generate">
+            <i class="bi bi-cpu"></i> Run AI Simulation
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results panel -->
+  <div class="col-md-8">
+    {% if results %}
+    <div class="card-simulator">
+      <div class="card-header-gradient" style="display: flex; justify-content: space-between; align-items: center;">
+        <h2 class="section-title-alt"><i class="bi bi-graph-up-arrow"></i> Predicted Forecast</h2>
+        <span style="font-size: 0.75rem; background: var(--brand-primary); color: white; padding: 4px 10px; border-radius: 20px;">AI Model v2.4</span>
+      </div>
+
+      <div style="overflow-x:auto;">
+        <table class="table-forecast">
+          <thead>
+            <tr>
+              <th>Food Item</th>
+              <th style="text-align:right;">Predicted Demand</th>
+              <th style="text-align:right;">Recommended Prep</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in results %}
+            <tr>
+              <td>
+                <div style="font-weight:700; color: var(--brand-dark);">{{ item.item }}</div>
+                <div style="font-size: 11px; color: var(--text-muted);">Historical confidence: 94%</div>
+              </td>
+              <td style="text-align:right;" class="value-display">{{ item.demand }}</td>
+              <td style="text-align:right;">
+                <span class="recommended-badge">{{ item.recommended }}</span>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <div style="padding: 24px; background: #fafafa; border-top: 1px solid #eee;">
+        <div style="display:flex; align-items:center; justify-content: space-between;">
+            <p style="font-size: 13px; color: var(--text-muted); margin:0;">
+                <i class="bi bi-info-circle"></i> These numbers are optimized to minimize food waste.
+            </p>
+            <a href="{% url 'production' %}" class="btn-generate" style="width: auto; padding: 10px 24px;">
+                <i class="bi bi-check-circle-fill"></i> Apply to Production
+            </a>
+        </div>
+      </div>
+    </div>
+    {% else %}
+    <div class="ai-empty-state">
+      <div class="pulse-icon">🤖</div>
+      <h3 style="font-weight:800; color: var(--brand-dark);">AI Engine Ready</h3>
+      <p style="color: var(--text-muted); max-width: 450px; margin: 0 auto;">
+        Adjust the environmental factors on the left and click generate to see how weather and events will likely impact your sales today.
+      </p>
+    </div>
+    {% endif %}
+  </div>
+
+</div>
+
+{% endblock %}

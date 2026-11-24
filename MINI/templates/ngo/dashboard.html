@@ -1,0 +1,80 @@
+{% extends 'ngo/base_ngo.html' %}
+
+{% block content %}
+
+<div class="page-header">
+  <h1>{{ ngo.ngo_name }}</h1>
+  <p><i class="bi bi-geo-alt"></i> {{ ngo.city }} &nbsp;·&nbsp; <span class="badge-status badge-accepted">● Active</span></p>
+</div>
+
+<!-- Stats -->
+<div class="row g-3 mb-4">
+  <div class="col-md-4">
+    <div class="stat-card">
+      <div class="stat-label">Food Requirements</div>
+      <div class="stat-value">{{ requirements|length }}</div>
+      <div class="stat-sub">registered items</div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="stat-card">
+      <div class="stat-label">Active Matches</div>
+      <div class="stat-value">{{ matches|length }}</div>
+      <div class="stat-sub">from restaurants</div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="stat-card">
+      <div class="stat-label">Status</div>
+      <div class="stat-value" style="font-size:24px; color: var(--brand-blue);">Active</div>
+      <div class="stat-sub">accepting donations</div>
+    </div>
+  </div>
+</div>
+
+<!-- Quick actions -->
+<div class="fw-card mb-4">
+  <div class="section-title">Quick actions</div>
+  <div style="display:flex; gap:10px;">
+    <a href="{% url 'requirements' %}" class="btn-fw-primary">
+      <i class="bi bi-plus-lg"></i> Add Requirement
+    </a>
+    <a href="{% url 'run_matching' %}" class="btn-fw-secondary">
+      <i class="bi bi-shuffle"></i> View Matches
+    </a>
+  </div>
+</div>
+
+<!-- Requirements list -->
+<div class="fw-card">
+  <div class="section-title">Food Requirements</div>
+  {% if requirements %}
+  <table class="fw-table">
+    <thead>
+      <tr>
+        <th>Food Item</th>
+        <th style="text-align:right;">Quantity Required</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in requirements %}
+      <tr>
+        <td style="font-weight:500;">{{ item.food_item }}</td>
+        <td style="text-align:right; font-weight:600;">{{ item.quantity_required }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div style="text-align:center; padding: 40px 0; color: var(--text-muted);">
+    <div style="font-size:36px; margin-bottom:12px;">📋</div>
+    <p style="font-weight:500; color: var(--text-secondary);">No requirements added yet</p>
+    <p style="font-size:13px; margin-top:4px;">Add your first food requirement to start receiving donations.</p>
+    <a href="{% url 'requirements' %}" class="btn-fw-primary" style="margin-top:16px; display:inline-flex;">
+      <i class="bi bi-plus-lg"></i> Add requirement
+    </a>
+  </div>
+  {% endif %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,212 @@
+{% extends 'restaurant/base_restaurant.html' %}
+
+{% block content %}
+<style>
+  :root {
+    --brand-primary: #10b981; /* Fresh Emerald Green */
+    --brand-dark: #064e3b;    /* Deep Forest Green */
+    --brand-light: #ecfdf5;   /* Very Light Mint */
+    --text-main: #1f2937;
+    --text-muted: #6b7280;
+  }
+
+  .page-header h1 {
+    font-weight: 800;
+    color: var(--brand-dark);
+    margin-bottom: 4px;
+  }
+
+  .page-header p {
+    color: var(--text-muted);
+    font-size: 1rem;
+    margin-bottom: 24px;
+  }
+
+  /* Enhanced Summary Card */
+  .stat-card-enhanced {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    border-radius: 16px;
+    padding: 32px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 32px;
+  }
+
+  .stat-icon-circle {
+    background: rgba(255, 255, 255, 0.2);
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    backdrop-filter: blur(4px);
+  }
+
+  .stat-label-alt {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+  }
+
+  .stat-value-alt {
+    color: #ffffff;
+    font-size: 42px;
+    font-weight: 800;
+    line-height: 1;
+    margin: 4px 0;
+  }
+
+  /* Enhanced Table Card */
+  .fw-card-enhanced {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e5e7eb;
+  }
+
+  .section-title-alt {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--brand-dark);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* Table Styling */
+  .fw-table-custom {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+
+  .fw-table-custom th {
+    background: var(--brand-light);
+    color: var(--brand-dark);
+    padding: 12px 16px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    border-bottom: 2px solid #d1fae5;
+  }
+
+  .fw-table-custom td {
+    padding: 16px;
+    border-bottom: 1px solid #f3f4f6;
+    vertical-align: middle;
+  }
+
+  .fw-table-custom tr:hover td {
+    background-color: #fafafa;
+  }
+
+  /* Status Badges */
+  .badge-pill {
+    padding: 6px 12px;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .badge-accepted { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+  .badge-rejected { background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; }
+  .badge-pending { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
+
+  /* Empty State Button */
+  .btn-green-main {
+    background: var(--brand-primary);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background 0.2s;
+  }
+
+  .btn-green-main:hover {
+    background: var(--brand-dark);
+    color: white;
+  }
+</style>
+
+<div class="page-header">
+  <h1>Donations Sent</h1>
+  <p>A record of all food matched and sent to NGOs in your area</p>
+</div>
+
+<!-- Summary Card -->
+<div class="stat-card-enhanced">
+  <div class="stat-icon-circle">🎁</div>
+  <div>
+    <div class="stat-label-alt">Total Accepted Donations</div>
+    <div class="stat-value-alt">{{ donations|length }}</div>
+    <div style="color: rgba(255,255,255,0.7); font-size: 0.9rem;">Batches delivered to communities</div>
+  </div>
+</div>
+
+<div class="fw-card-enhanced">
+  <div class="section-title-alt">
+    <i class="bi bi-clock-history"></i> Donation History
+  </div>
+
+  {% if donations %}
+  <div style="overflow-x: auto;">
+    <table class="fw-table-custom">
+      <thead>
+        <tr>
+          <th>Food Item</th>
+          <th>NGO</th>
+          <th style="text-align:right;">Quantity</th>
+          <th style="text-align:center;">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for donation in donations %}
+        <tr>
+          <td style="font-weight:600; color: var(--brand-dark);">{{ donation.production_log.menu_item.item_name }}</td>
+          <td style="color: var(--text-muted);">
+            <i class="bi bi-house-heart" style="margin-right: 4px; color: var(--brand-primary);"></i>
+            {{ donation.ngo.ngo_name }}
+          </td>
+          <td style="text-align:right; font-weight:700; font-family: 'DM Serif Display', serif; font-size:18px; color: var(--brand-dark);">
+            {{ donation.allocated_quantity }}
+          </td>
+          <td style="text-align:center;">
+            {% if donation.status == "Accepted" %}
+              <span class="badge-pill badge-accepted">● Accepted</span>
+            {% elif donation.status == "Rejected" %}
+              <span class="badge-pill badge-rejected">● Rejected</span>
+            {% else %}
+              <span class="badge-pill badge-pending">● Pending</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div style="text-align:center; padding: 64px 0;">
+    <div style="font-size:50px; margin-bottom:16px; opacity: 0.5;">🌿</div>
+    <h3 style="color: var(--brand-dark); font-weight: 700;">No donations yet</h3>
+    <p style="color: var(--text-muted); margin-bottom: 24px;">Log your daily production to start matching surplus food with NGOs.</p>
+    <a href="{% url 'production' %}" class="btn-green-main">
+      <i class="bi bi-fire"></i> Log production
+    </a>
+  </div>
+  {% endif %}
+</div>
+
+{% endblock %}

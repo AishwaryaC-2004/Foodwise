@@ -1,0 +1,241 @@
+{% extends 'restaurant/base_restaurant.html' %}
+
+{% block content %}
+<style>
+  :root {
+    --brand-primary: #10b981; 
+    --brand-dark: #064e3b;    
+    --brand-light: #ecfdf5;   
+    --text-main: #1f2937;
+    --text-muted: #6b7280;
+    --input-bg: #f9fafb;
+  }
+
+  .page-header h1 {
+    font-weight: 800;
+    color: var(--brand-dark);
+    margin-bottom: 4px;
+    letter-spacing: -0.02em;
+  }
+
+  .page-header p {
+    color: var(--text-muted);
+    font-size: 1rem;
+    margin-bottom: 24px;
+  }
+
+  /* Enhanced Form Card */
+  .fw-card-enhanced {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 0; /* Handled by internal spacing */
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04);
+    border: 1px solid #e5e7eb;
+    margin-bottom: 24px;
+    overflow: hidden;
+  }
+
+  .card-header-custom {
+    padding: 20px 24px;
+    background: #ffffff;
+    border-bottom: 1px solid #f3f4f6;
+  }
+
+  .section-title-alt {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--brand-dark);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* Table Styling */
+  .fw-table-custom {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .fw-table-custom th {
+    background: var(--brand-light);
+    color: var(--brand-dark);
+    padding: 14px 24px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 2px solid #d1fae5;
+  }
+
+  .fw-table-custom td {
+    padding: 16px 24px;
+    border-bottom: 1px solid #f3f4f6;
+    vertical-align: middle;
+  }
+
+  /* Enhanced Input Styling */
+  .fw-input-green {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background: var(--input-bg);
+    transition: all 0.2s;
+    font-weight: 500;
+    color: var(--text-main);
+  }
+
+  .fw-input-green:focus {
+    outline: none;
+    border-color: var(--brand-primary);
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+  }
+
+  /* Surplus Column Highlight */
+  .surplus-column {
+    background-color: #f8fafc;
+    color: var(--brand-primary);
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-align: center;
+  }
+
+  /* Action Buttons */
+  .action-bar {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    padding: 10px 0;
+  }
+
+  .btn-save {
+    background: var(--brand-primary);
+    color: white;
+    padding: 12px 28px;
+    border-radius: 10px;
+    border: none;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+
+  .btn-save:hover {
+    background: var(--brand-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+  }
+
+  .btn-cancel {
+    background: #ffffff;
+    color: var(--text-muted);
+    padding: 12px 24px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    border: 1px solid #d1d5db;
+    transition: all 0.2s;
+  }
+
+  .btn-cancel:hover {
+    background: #f9fafb;
+    color: var(--brand-dark);
+    border-color: var(--brand-primary);
+  }
+
+  .helper-text {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-left: auto;
+    background: var(--brand-light);
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid #d1fae5;
+  }
+</style>
+
+<div class="page-header">
+  <h1>Log Today's Production</h1>
+  <p>Track your inventory to automatically calculate surplus for donations</p>
+</div>
+
+<form method="POST">
+  {% csrf_token %}
+
+  <div class="fw-card-enhanced">
+    <div class="card-header-custom">
+      <div class="section-title-alt">
+        <i class="bi bi-pencil-square"></i> Inventory Entry
+      </div>
+    </div>
+
+    <div style="overflow-x:auto;">
+      <table class="fw-table-custom">
+        <thead>
+          <tr>
+            <th style="width: 30%;">Menu Item</th>
+            <th><i class="bi bi-graph-up-arrow"></i> Predicted</th>
+            <th><i class="bi bi-fire"></i> Produced</th>
+            <th><i class="bi bi-cart-check"></i> Sold</th>
+            <th style="text-align:center; background: #064e3b; color: #ffffff; border-bottom: none;">
+              Surplus Calculation
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in menu_items %}
+          <tr>
+            <td style="font-weight:600; color: var(--brand-dark);">
+              {{ item.item_name }}
+            </td>
+            <td>
+              <input
+                type="number"
+                name="predicted_{{ item.id }}"
+                class="fw-input-green"
+                placeholder="0"
+                min="0">
+            </td>
+            <td>
+              <input
+                type="number"
+                name="produced_{{ item.id }}"
+                class="fw-input-green"
+                placeholder="0"
+                min="0">
+            </td>
+            <td>
+              <input
+                type="number"
+                name="sold_{{ item.id }}"
+                class="fw-input-green"
+                placeholder="0"
+                min="0">
+            </td>
+            <td class="surplus-column">
+              <span style="opacity: 0.7;">Auto-calculating...</span>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="action-bar">
+    <button type="submit" class="btn-save">
+      <i class="bi bi-cloud-arrow-up-fill"></i> Save Production Log
+    </button>
+    <a href="{% url 'dashboard' %}" class="btn-cancel">Cancel</a>
+    
+    <span class="helper-text">
+      <i class="bi bi-info-circle-fill" style="color: var(--brand-primary);"></i>
+      Matches with local NGOs are generated instantly after saving.
+    </span>
+  </div>
+</form>
+
+{% endblock %}

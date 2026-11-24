@@ -1,0 +1,39 @@
+{% extends 'restaurant/base_restaurant.html' %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <h2>
+        Demand Forecast
+    </h2>
+
+    <table class="table table-striped">
+
+        <thead>
+            <tr>
+                <th>Menu Item</th>
+                <th>Predicted Demand</th>
+                <th>Recommended Production</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            {% for row in forecasts %}
+
+            <tr>
+                <td>{{ row.item }}</td>
+                <td>{{ row.predicted }}</td>
+                <td>{{ row.recommended }}</td>
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+{% endblock %}

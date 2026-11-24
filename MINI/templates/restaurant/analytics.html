@@ -1,0 +1,85 @@
+{% extends 'restaurant/base_restaurant.html' %}
+
+{% block content %}
+
+<div class="page-header">
+  <h1>FoodWise Analytics</h1>
+  <p>A complete picture of your food production and donation impact</p>
+</div>
+
+<!-- Efficiency hero -->
+<div style="background: var(--brand-dark); border-radius:12px; padding: 28px 32px; margin-bottom:24px; display:flex; align-items:center; justify-content:space-between;">
+  <div>
+    <div style="font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.7px; color:rgba(255,255,255,0.4); margin-bottom:8px;">Donation Efficiency</div>
+    <div style="font-family: 'DM Serif Display', serif; font-size:64px; color:#fff; line-height:1;">{{ efficiency }}<span style="font-size:32px; color:rgba(255,255,255,0.5);">%</span></div>
+    <div style="font-size:13px; color:rgba(255,255,255,0.45); margin-top:6px;">of surplus food successfully matched and donated</div>
+  </div>
+  <div style="font-size:80px; opacity:0.15;">♻</div>
+</div>
+
+<!-- Stat grid -->
+<div class="row g-3 mb-4">
+  <div class="col-md-4">
+    <div class="stat-card">
+      <div class="stat-label">Total Forecasted</div>
+      <div class="stat-value">{{ forecasted }}</div>
+      <div class="stat-sub">units predicted by AI</div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="stat-card">
+      <div class="stat-label">Total Produced</div>
+      <div class="stat-value">{{ produced }}</div>
+      <div class="stat-sub">units cooked</div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="stat-card">
+      <div class="stat-label">Total Sold</div>
+      <div class="stat-value">{{ sold }}</div>
+      <div class="stat-sub">units to customers</div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="stat-card" style="border-left: 3px solid var(--brand-gold);">
+      <div class="stat-label">Total Leftover</div>
+      <div class="stat-value" style="color: var(--brand-gold);">{{ leftover }}</div>
+      <div class="stat-sub">produced − sold</div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="stat-card" style="border-left: 3px solid var(--brand-green);">
+      <div class="stat-label">Total Donated</div>
+      <div class="stat-value" style="color: var(--brand-green);">{{ donated }}</div>
+      <div class="stat-sub">sent to NGOs</div>
+    </div>
+  </div>
+</div>
+
+<!-- Flow breakdown -->
+<div class="fw-card">
+  <div class="section-title">Food flow breakdown</div>
+  <div style="display:flex; align-items:center; gap:0; background: #f9fafb; border-radius:8px; overflow:hidden; border: 1px solid var(--border);">
+    <div style="flex:3; padding:16px 20px; border-right:1px solid var(--border);">
+      <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color: var(--text-muted); margin-bottom:4px;">Produced</div>
+      <div style="font-family: 'DM Serif Display', serif; font-size:24px;">{{ produced }}</div>
+    </div>
+    <div style="padding:0 8px; color: var(--text-muted); font-size:18px;">→</div>
+    <div style="flex:2; padding:16px 20px; border-right:1px solid var(--border);">
+      <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color: var(--text-muted); margin-bottom:4px;">Sold</div>
+      <div style="font-family: 'DM Serif Display', serif; font-size:24px;">{{ sold }}</div>
+    </div>
+    <div style="padding:0 8px; color: var(--text-muted); font-size:18px;">→</div>
+    <div style="flex:1; padding:16px 20px; border-right:1px solid var(--border); background: var(--brand-gold-light);">
+      <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color: #92400e; margin-bottom:4px;">Leftover</div>
+      <div style="font-family: 'DM Serif Display', serif; font-size:24px; color: var(--brand-gold);">{{ leftover }}</div>
+    </div>
+    <div style="padding:0 8px; color: var(--text-muted); font-size:18px;">→</div>
+    <div style="flex:1; padding:16px 20px; background: var(--brand-green-muted);">
+      <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color: #166534; margin-bottom:4px;">Donated</div>
+      <div style="font-family: 'DM Serif Display', serif; font-size:24px; color: var(--brand-green);">{{ donated }}</div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

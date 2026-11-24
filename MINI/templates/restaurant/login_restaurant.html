@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FoodWise — Restaurant Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --brand-green: #2d7a4f;
+    --brand-green-light: #3d9962;
+    --brand-dark: #1a2e1f;
+    --border: #e5e7eb;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 480px;
+  }
+
+  /* Left panel — visual */
+  .login-visual {
+    background: var(--brand-dark);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 60px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .login-visual::before {
+    content: '';
+    position: absolute;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(45,122,79,0.3) 0%, transparent 70%);
+    top: -100px; left: -100px;
+  }
+
+  .login-visual::after {
+    content: '';
+    position: absolute;
+    width: 400px; height: 400px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(232,160,32,0.15) 0%, transparent 70%);
+    bottom: -80px; right: -80px;
+  }
+
+  .login-visual .content { position: relative; z-index: 1; }
+
+  .login-visual .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(45,122,79,0.3);
+    border: 1px solid rgba(45,122,79,0.5);
+    color: #6ee7a0;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+
+  .login-visual h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 48px;
+    color: #fff;
+    line-height: 1.15;
+    margin-bottom: 16px;
+  }
+
+  .login-visual h1 span {
+    color: #6ee7a0;
+  }
+
+  .login-visual p {
+    font-size: 16px;
+    color: rgba(255,255,255,0.55);
+    line-height: 1.7;
+    max-width: 400px;
+    margin-bottom: 48px;
+  }
+
+  .stats-row {
+    display: flex;
+    gap: 32px;
+  }
+
+  .stat-item .val {
+    font-family: 'DM Serif Display', serif;
+    font-size: 32px;
+    color: #fff;
+  }
+
+  .stat-item .lbl {
+    font-size: 12px;
+    color: rgba(255,255,255,0.4);
+    margin-top: 2px;
+  }
+
+  /* Right panel — form */
+  .login-form-panel {
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 60px 48px;
+  }
+
+  .form-header {
+    margin-bottom: 40px;
+  }
+
+  .form-header .logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 24px;
+    color: var(--brand-dark);
+    margin-bottom: 8px;
+  }
+
+  .form-header .logo span { color: var(--brand-green); }
+
+  .form-header h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px;
+    color: #111827;
+    margin-bottom: 6px;
+  }
+
+  .form-header p {
+    font-size: 14px;
+    color: #6b7280;
+  }
+
+  .form-group { margin-bottom: 20px; }
+
+  .fw-label {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #6b7280;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .fw-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-size: 15px;
+    font-family: 'Inter', sans-serif;
+    color: #111827;
+    background: #fafafa;
+    transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+    outline: none;
+  }
+
+  .fw-input:focus {
+    border-color: var(--brand-green);
+    box-shadow: 0 0 0 3px rgba(45,122,79,0.12);
+    background: #fff;
+  }
+
+  .btn-login {
+    width: 100%;
+    padding: 13px;
+    background: var(--brand-green);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    margin-top: 8px;
+  }
+
+  .btn-login:hover {
+    background: var(--brand-green-light);
+    transform: translateY(-1px);
+  }
+
+  .btn-login:active { transform: translateY(0); }
+
+  .error-msg {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #fee2e2;
+    color: #991b1b;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    margin-top: 16px;
+  }
+
+  .ngo-link {
+    margin-top: 32px;
+    text-align: center;
+    font-size: 13px;
+    color: #9ca3af;
+  }
+
+  .ngo-link a {
+    color: var(--brand-green);
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .ngo-link a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<!-- Left visual panel -->
+<div class="login-visual">
+  <div class="content">
+    <div class="tag">🍽 Restaurant Portal</div>
+    <h1>Less waste.<br><span>More impact.</span></h1>
+    <p>Forecast demand with AI, log production, and connect surplus food with communities that need it most.</p>
+    <div class="stats-row">
+      <div class="stat-item">
+        <div class="val">94%</div>
+        <div class="lbl">Match success rate</div>
+      </div>
+      <div class="stat-item">
+        <div class="val">12k+</div>
+        <div class="lbl">Meals donated</div>
+      </div>
+      <div class="stat-item">
+        <div class="val">48h</div>
+        <div class="lbl">Average match time</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Right form panel -->
+<div class="login-form-panel">
+  <div class="form-header">
+    <div class="logo">Food<span>Wise</span></div>
+    <h2>Welcome back</h2>
+    <p>Sign in to your restaurant account</p>
+  </div>
+
+  <form method="POST">
+    {% csrf_token %}
+    <div class="form-group">
+      <label class="fw-label">Restaurant ID</label>
+      <input
+        type="text"
+        name="restaurant_id"
+        class="fw-input"
+        placeholder="Enter your restaurant ID"
+        required
+        autocomplete="off">
+    </div>
+
+    <button type="submit" class="btn-login">Sign in →</button>
+
+    {% if error %}
+    <div class="error-msg">
+      ⚠ {{ error }}
+    </div>
+    {% endif %}
+  </form>
+
+  <div class="ngo-link">
+    Are you an NGO? <a href="#">Access NGO portal</a>
+  </div>
+</div>
+
+</body>
+</html>

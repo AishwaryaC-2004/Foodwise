@@ -1,0 +1,75 @@
+{% extends 'ngo/base_ngo.html' %}
+
+{% block content %}
+
+<div class="page-header">
+  <h1>Donation Matches</h1>
+  <p>Review and respond to food donations matched to your requirements</p>
+</div>
+
+<div class="fw-card">
+  {% if matches %}
+  <table class="fw-table">
+    <thead>
+      <tr>
+        <th>NGO</th>
+        <th>Restaurant</th>
+        <th>City</th>
+        <th>Food Item</th>
+        <th style="text-align:right;">Allocated</th>
+        <th style="text-align:center;">Status</th>
+        <th style="text-align:right;">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for match in matches %}
+      <tr>
+        <td style="font-weight:500;">{{ match.ngo.ngo_name }}</td>
+        <td>
+        {{ match.production_log.restaurant.restaurant_name }}
+        </td>
+        <td>
+        {{ match.production_log.restaurant.city }}
+        </td>
+        <td style="color: var(--text-secondary);">{{ match.production_log.menu_item.item_name }}</td>
+        <td style="text-align:right; font-weight:700; font-family: 'DM Serif Display', serif; font-size:18px;">{{ match.allocated_quantity }}</td>
+        <td style="text-align:center;">
+          {% if match.status == "Pending" %}
+            <span class="badge-status badge-pending">⏳ Pending</span>
+          {% elif match.status == "Accepted" %}
+            <span class="badge-status badge-accepted">✓ Accepted</span>
+          {% else %}
+            <span class="badge-status badge-rejected">✕ Rejected</span>
+          {% endif %}
+        </td>
+        <td style="text-align:right;">
+          {% if match.status == "Pending" %}
+          <div style="display:flex; gap:8px; justify-content:flex-end;">
+            <a href="{% url 'accept_match' match.id %}" class="btn-fw-success">
+              <i class="bi bi-check-lg"></i> Accept
+            </a>
+            <a href="{% url 'reject_match' match.id %}" class="btn-fw-danger">
+              <i class="bi bi-x-lg"></i> Reject
+            </a>
+          </div>
+          {% else %}
+            <span style="font-size:12px; color: var(--text-muted);">—</span>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div style="text-align:center; padding: 48px 0;">
+    <div style="font-size:40px; margin-bottom:12px;">🤝</div>
+    <p style="font-weight:500; color: var(--text-secondary);">No matches yet</p>
+    <p style="font-size:13px; color: var(--text-muted); margin-top:4px;">Add food requirements to be matched with restaurant donations.</p>
+    <a href="{% url 'requirements' %}" class="btn-fw-primary" style="margin-top:16px; display:inline-flex;">
+      <i class="bi bi-clipboard-check"></i> Add requirements
+    </a>
+  </div>
+  {% endif %}
+</div>
+
+{% endblock %}

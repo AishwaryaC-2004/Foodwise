@@ -1,0 +1,333 @@
+{% extends 'restaurant/base_restaurant.html' %}
+
+{% block content %}
+<style>
+  /* ── Light Green Professional Palette ── */
+  :root {
+    --primary-green: #10b981;    /* Vibrant Emerald */
+    --dark-green: #064e3b;       /* Forest Deep */
+    --light-bg-green: #f0fdf4;   /* Very Light Professional Green */
+    --soft-green: #dcfce7;       /* Slightly deeper mint */
+    --slate-heading: #1e293b;    /* Navy Slate */
+    --slate-text: #475569;
+    --border-green: #bbf7d0;
+    --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04);
+  }
+
+  /* ── Page Header ── */
+  .page-header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.6rem;
+    color: var(--slate-heading);
+    margin-bottom: 0.2rem;
+  }
+  .page-header p {
+    color: var(--slate-text);
+    font-weight: 600;
+    font-size: 1rem;
+  }
+  .badge-active {
+    background: var(--primary-green);
+    color: #fff;
+    padding: 5px 14px;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── Light Green Pipeline Bar ── */
+  .pipeline-bar {
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    border: 2px solid var(--border-green);
+    border-radius: 24px;
+    padding: 2.2rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    box-shadow: 0 15px 30px -10px rgba(16, 185, 129, 0.15);
+    margin-bottom: 2.5rem;
+    position: relative;
+  }
+  
+  .pipeline-step {
+    text-align: center;
+    flex: 1;
+    z-index: 1;
+  }
+
+  .ps-icon {
+    font-size: 2.2rem;
+    margin-bottom: 0.6rem;
+    display: block;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.05));
+  }
+
+  .ps-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 800;
+    color: var(--slate-text); 
+    margin-bottom: 4px;
+  }
+
+  .ps-value {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2rem;
+    color: var(--dark-green); 
+    line-height: 1;
+  }
+
+  .pipeline-arrow {
+    color: var(--primary-green);
+    font-size: 1.5rem;
+    opacity: 0.4;
+  }
+
+  /* Instruction: No card/box for the active step, only color change */
+  .pipeline-step.active .ps-label {
+    color: var(--primary-green);
+  }
+  
+  .pipeline-step.active .ps-value {
+    color: var(--primary-green);
+    font-weight: bold;
+  }
+
+  /* ── All Stat Cards ── */
+  .stat-card {
+    background: var(--light-bg-green);
+    border: 1px solid var(--border-green);
+    border-bottom: 5px solid var(--primary-green); 
+    border-radius: 18px;
+    padding: 1.8rem;
+    box-shadow: var(--card-shadow);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .stat-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 25px -5px rgba(16, 185, 129, 0.1);
+  }
+
+  .stat-label {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--dark-green);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    opacity: 0.8;
+  }
+
+  .stat-value {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.5rem;
+    color: var(--primary-green); 
+    margin: 0.5rem 0;
+    line-height: 1;
+  }
+
+  .stat-sub {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--slate-text);
+  }
+
+  /* ── Content Containers ── */
+  .fw-card {
+    background: #fff;
+    border: 1px solid var(--border-green);
+    border-radius: 20px;
+    padding: 2.5rem;
+    box-shadow: var(--card-shadow);
+  }
+
+  .section-title {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--dark-green);
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-title::before {
+    content: '';
+    width: 6px;
+    height: 24px;
+    background: var(--primary-green);
+    border-radius: 10px;
+    display: inline-block;
+  }
+
+  /* ── Buttons ── */
+  .btn-fw-primary {
+    background: var(--primary-green);
+    color: #fff !important;
+    border-radius: 12px;
+    padding: 12px 24px;
+    font-weight: 800;
+    font-size: 0.9rem;
+    border: none;
+    transition: all 0.2s;
+  }
+
+  .btn-fw-primary:hover {
+    background: var(--dark-green);
+    transform: scale(1.05);
+  }
+
+  .btn-fw-secondary {
+    background: var(--light-bg-green);
+    color: var(--dark-green) !important;
+    border: 1px solid var(--border-green);
+    border-radius: 12px;
+    padding: 12px 24px;
+    font-weight: 700;
+    font-size: 0.9rem;
+  }
+
+  /* ── Table Styling ── */
+  .fw-table thead th {
+    background: var(--light-bg-green);
+    color: var(--dark-green);
+    font-weight: 800;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    padding: 18px;
+    border-bottom: 2px solid var(--border-green);
+  }
+
+  .fw-table tbody td {
+    padding: 20px 18px;
+    border-bottom: 1px solid var(--light-bg-green);
+    font-size: 1rem;
+    color: var(--slate-heading);
+  }
+</style>
+
+<div class="page-header">
+  <h1>{{ restaurant.restaurant_name }}</h1>
+  <p>
+    <i class="bi bi-geo-alt-fill text-success"></i> {{ restaurant.city }} 
+    &nbsp;·&nbsp; 
+    <span class="badge-active">Active Terminal</span>
+  </p>
+</div>
+
+<!-- Pipeline bar -->
+<div class="pipeline-bar">
+  <div class="pipeline-step">
+    <div class="ps-icon">📈</div>
+    <div class="ps-label">Forecasted</div>
+    <div class="ps-value">260</div>
+  </div>
+  <div class="pipeline-arrow"><i class="bi bi-arrow-right"></i></div>
+  <div class="pipeline-step">
+    <div class="ps-icon">🍳</div>
+    <div class="ps-label">Produced</div>
+    <div class="ps-value">—</div>
+  </div>
+  <div class="pipeline-arrow"><i class="bi bi-arrow-right"></i></div>
+  <div class="pipeline-step">
+    <div class="ps-icon">🛒</div>
+    <div class="ps-label">Sold</div>
+    <div class="ps-value">—</div>
+  </div>
+  <div class="pipeline-arrow"><i class="bi bi-arrow-right"></i></div>
+  <div class="pipeline-step active">
+    <div class="ps-icon">🎁</div>
+    <div class="ps-label">Donated</div>
+    <div class="ps-value">{{ donations|length }}</div>
+  </div>
+</div>
+
+<!-- Stats row -->
+<div class="row g-4 mb-5">
+  <div class="col-md-3">
+    <div class="stat-card">
+      <div class="stat-label">Menu Items</div>
+      <div class="stat-value">{{ menu_items|length }}</div>
+      <div class="stat-sub">Units in Catalog</div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="stat-card">
+      <div class="stat-label">Tomorrow</div>
+      <div class="stat-value">260</div>
+      <div class="stat-sub">Predictions Ready</div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="stat-card">
+      <div class="stat-label">Social Impact</div>
+      <div class="stat-value">{{ donations|length }}</div>
+      <div class="stat-sub">Total Donations</div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="stat-card">
+      <div class="stat-label">System Status</div>
+      <div class="stat-value">Live</div>
+      <div class="stat-sub">All Systems Nominal</div>
+    </div>
+  </div>
+</div>
+
+<!-- Quick actions -->
+<div class="fw-card mb-5">
+  <div class="section-title">Control Terminal</div>
+  <div style="display:flex; flex-wrap:wrap; gap:12px;">
+    <a href="{% url 'prediction' %}" class="btn-fw-primary">
+      <i class="bi bi-graph-up-arrow"></i> Run Forecast
+    </a>
+    <!-- Instruction: Blue outline/border removed -->
+    <a href="{% url 'simulator' %}" class="btn-fw-secondary">
+      <i class="bi bi-cpu"></i> AI Simulator
+    </a>
+    <a href="{% url 'production' %}" class="btn-fw-secondary">
+      <i class="bi bi-fire"></i> Log Production
+    </a>
+    <a href="{% url 'donations' %}" class="btn-fw-secondary">
+      <i class="bi bi-gift"></i> View Donations
+    </a>
+    <a href="{% url 'map' %}" class="btn-fw-secondary">
+      <i class="bi bi-map"></i> Map View
+    </a>
+    <a href="{% url 'analytics' %}" class="btn-fw-secondary">
+      <i class="bi bi-bar-chart-line"></i> Analytics
+    </a>
+  </div>
+</div>
+
+<!-- Menu -->
+<div class="fw-card">
+  <div class="section-title">Restaurant Catalog</div>
+  <div class="table-responsive">
+    <table class="table fw-table">
+      <thead>
+        <tr>
+          <th width="10%">#</th>
+          <th>Item Description</th>
+          <th style="text-align:right;">Base Price</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in menu_items|slice:":30" %}
+        <tr>
+          <td style="color: var(--primary-green); font-weight:800;">{{ forloop.counter }}</td>
+          <td style="font-weight:700;">{{ item.item_name }}</td>
+          <td style="text-align:right; font-weight:800; color: var(--primary-green);">₹{{ item.base_price }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}

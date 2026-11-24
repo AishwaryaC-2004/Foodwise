@@ -1,0 +1,199 @@
+{% extends 'restaurant/base_restaurant.html' %}
+
+{% block content %}
+<style>
+  /* ── Light Green Professional Palette ── */
+  :root {
+    --primary-green: #10b981;    /* Vibrant Emerald */
+    --dark-green: #064e3b;       /* Forest Deep */
+    --light-bg-green: #f0fdf4;   /* Very Light Green */
+    --soft-green: #dcfce7;       /* Slightly deeper mint */
+    --slate-heading: #1e293b;    /* Navy Slate */
+    --slate-text: #475569;
+    --border-green: #bbf7d0;
+    --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04);
+  }
+
+  /* ── Page Header ── */
+  .page-header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.6rem;
+    color: var(--slate-heading);
+    margin-bottom: 0.2rem;
+  }
+  .page-header p {
+    color: var(--slate-text);
+    font-weight: 600;
+  }
+
+  /* ── Stat Cards (Operation Style) ── */
+  .stat-card {
+    background: var(--light-bg-green);
+    border: 1px solid var(--border-green);
+    border-bottom: 5px solid var(--primary-green);
+    border-radius: 18px;
+    padding: 1.5rem;
+    box-shadow: var(--card-shadow);
+    transition: all 0.3s ease;
+    height: 100%;
+  }
+  .stat-label {
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: var(--dark-green);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    opacity: 0.8;
+    margin-bottom: 8px;
+    display: block;
+  }
+  .stat-value {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--slate-heading);
+    line-height: 1.2;
+  }
+  .stat-highlight {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.2rem;
+    color: var(--primary-green);
+    display: block;
+    margin-top: 5px;
+  }
+
+  /* ── Map Legend Toolbar ── */
+  .map-legend-bar {
+    background: white;
+    padding: 12px 24px;
+    border-radius: 12px;
+    border: 1px solid var(--border-green);
+    display: flex;
+    gap: 20px;
+    margin-bottom: 15px;
+    align-items: center;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--slate-text);
+  }
+  .dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+  }
+
+  /* ── Map Container ── */
+  .map-container {
+    background: #fff;
+    border: 1px solid var(--border-green);
+    border-radius: 24px;
+    padding: 0; /* Original padding preference */
+    box-shadow: var(--card-shadow);
+    overflow: hidden;
+  }
+  #map {
+    height: 560px;
+    border-radius: 12px; /* Matching original border radius */
+  }
+</style>
+
+<div class="page-header">
+  <h1>Distribution Map</h1>
+  <p>Real-time view of restaurants and NGOs in your network</p>
+</div>
+
+<!-- Stats Row -->
+<div class="row g-4 mb-5">
+  <div class="col-md-4">
+    <div class="stat-card">
+      <span class="stat-label">Your Restaurant</span>
+      <div class="stat-value">{{ restaurant.restaurant_name }}</div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="stat-card">
+      <span class="stat-label">Nearest NGO</span>
+      <div class="stat-value">{{ nearest_ngo.ngo_name }}</div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="stat-card">
+      <span class="stat-label">Distance</span>
+      <span class="stat-highlight">{{ distance }} <small style="font-size: 1rem;">km</small></span>
+    </div>
+  </div>
+</div>
+
+<!-- Legend Toolbar -->
+<div class="map-legend-bar">
+  <div class="legend-item">
+    <span class="dot" style="background: #3b82f6;"></span> Restaurants
+  </div>
+  <div class="legend-item">
+    <span class="dot" style="background: #dc2626;"></span> NGOs
+  </div>
+  <div class="legend-item">
+    <span style="width:32px; height:3px; background:#2d7a4f; border-radius:2px;"></span> Nearest route
+  </div>
+</div>
+
+<!-- Map Card -->
+<div class="map-container">
+  <div id="map"></div>
+</div>
+
+<!-- Map Assets -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<script>
+// Map logic - EXACTLY same as previous
+var map = L.map('map').setView([12.2958, 76.6394], 7);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '© OpenStreetMap contributors',
+  maxZoom: 18
+}).addTo(map);
+
+// Route line
+var route = L.polyline(
+  [
+    [{{ restaurant.latitude }}, {{ restaurant.longitude }}],
+    [{{ nearest_ngo.latitude }}, {{ nearest_ngo.longitude }}]
+  ],
+  { color: '#2d7a4f', weight: 3, dashArray: '8 4', opacity: 0.8 }
+).addTo(map);
+
+// Restaurant markers
+{% for r in restaurants %}
+L.circleMarker([{{ r.latitude }}, {{ r.longitude }}], {
+  radius: 8,
+  color: '#fff',
+  weight: 2,
+  fillColor: '#3b82f6',
+  fillOpacity: 0.9
+})
+.addTo(map)
+.bindPopup('<div style="font-family:Inter,sans-serif;"><b style="font-size:13px;">🍽 {{ r.restaurant_name }}</b></div>');
+{% endfor %}
+
+// NGO markers
+{% for ngo in ngos %}
+L.circleMarker([{{ ngo.latitude }}, {{ ngo.longitude }}], {
+  radius: 10,
+  color: '#fff',
+  weight: 2,
+  fillColor: '#dc2626',
+  fillOpacity: 0.9
+})
+.addTo(map)
+.bindPopup('<div style="font-family:Inter,sans-serif;"><b style="font-size:13px;">🤝 {{ ngo.ngo_name }}</b></div>');
+{% endfor %}
+</script>
+
+{% endblock %}
